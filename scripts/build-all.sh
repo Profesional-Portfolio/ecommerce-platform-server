@@ -12,8 +12,8 @@ for service in "${services[@]}"; do
     cd "microservices/$service"
     
     if [ -f "package.json" ]; then
-        npm install
-        npm run build
+        pnpm install
+        pnpm run build
         echo "✅ $service construido exitosamente"
     else
         echo "❌ No se encontró package.json en $service"

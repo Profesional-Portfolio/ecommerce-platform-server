@@ -4,7 +4,7 @@
 
 echo "🛑 Deteniendo microservicios..."
 
-docker-compose down
+docker compose down
 
 echo "✅ Todos los servicios han sido detenidos."
 

@@ -1,21 +1,25 @@
-FROM node:20-alpine
+FROM node:22-alpine
 
-WORKDIR /app
+ENV PNPM_HOME="/pnpm"
 
-# Copiar archivos de dependencias
-COPY package*.json ./
+ENV PATH="$PNPM_HOME:$PATH"
 
-# Instalar dependencias
-RUN npm install --legacy-peer-deps
+RUN corepack enable
 
-# Copiar código fuente
+RUN addgroup app && adduser -S -G app app
+
+USER app
+
+WORKDIR /usr/src/app
+
+COPY package.json *.yaml ./
+
+USER root
+
+RUN pnpm install --frozen-lockfile
+
 COPY . .
 
-# Compilar la aplicación
-RUN npm run build
-
-# Exponer puerto
 EXPOSE 3002
 
-# Comando por defecto
-CMD ["npm", "run", "start:prod"]
+CMD ["pnpm", "start:dev"]

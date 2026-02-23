@@ -61,7 +61,7 @@ services:
     volumes:
       - ./microservices/api-gateway:/app
       - /app/node_modules
-    command: npm run start:dev
+    command: pnpm run start:dev
 
   # User Service
   user-service:
@@ -86,7 +86,7 @@ services:
     volumes:
       - ./microservices/user-service:/app
       - /app/node_modules
-    command: npm run start:dev
+    command: pnpm run start:dev
 
   # Product Service
   product-service:
@@ -106,7 +106,7 @@ services:
     volumes:
       - ./microservices/product-service:/app
       - /app/node_modules
-    command: npm run start:dev
+    command: pnpm run start:dev
 
   # Notification Service
   notification-service:
@@ -128,7 +128,7 @@ services:
     volumes:
       - ./microservices/notification-service:/app
       - /app/node_modules
-    command: npm run start:dev
+    command: pnpm run start:dev
 
 volumes:
   postgres_data:

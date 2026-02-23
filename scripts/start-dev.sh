@@ -10,17 +10,17 @@ if ! docker info > /dev/null 2>&1; then
     exit 1
 fi
 
-# Crear red si no existe
+# Crear red si no existe                                                                              
 docker network create microservices-network 2>/dev/null || true
 
 echo "📦 Iniciando bases de datos..."
-docker-compose up -d postgres mongodb redis
+docker compose up -d postgres mongodb redis
 
 echo "⏳ Esperando que las bases de datos estén listas..."
 sleep 10
 
 echo "🔧 Iniciando microservicios..."
-docker-compose up -d api-gateway user-service product-service notification-service
+docker compose up -d api-gateway user-service product-service notification-service
 
 echo "✅ Todos los servicios están iniciados!"
 echo ""
