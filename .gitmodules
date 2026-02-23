@@ -1,0 +1,13 @@
+
+[submodule "ecommerce-users-service"]
+	path = ecommerce-users-service
+	url = https://github.com/Profesional-Portfolio/ecommerce-users-service.git
+[submodule "ecommerce-products-service"]
+	path = ecommerce-products-service
+	url = https://github.com/Profesional-Portfolio/ecommerce-products-service.git
+[submodule "ecommerce-notifications-service"]
+	path = ecommerce-notifications-service
+	url = https://github.com/Profesional-Portfolio/ecommerce-notifications-service.git
+[submodule "ecommerce-api-gateway"]
+	path = ecommerce-api-gateway
+	url = https://github.com/Profesional-Portfolio/ecommerce-api-gateway.git
