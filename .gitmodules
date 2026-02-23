@@ -1,0 +1,12 @@
+[submodule "microservices/api-gateway"]
+	path = microservices/api-gateway
+	url = file:///home/davejs/Documents/projects/fullstack/api-gateway-repo
+[submodule "microservices/notification-service"]
+	path = microservices/notification-service
+	url = file:///home/davejs/Documents/projects/fullstack/notification-service-repo
+[submodule "microservices/product-service"]
+	path = microservices/product-service
+	url = file:///home/davejs/Documents/projects/fullstack/product-service-repo
+[submodule "microservices/user-service"]
+	path = microservices/user-service
+	url = file:///home/davejs/Documents/projects/fullstack/user-service-repo
