@@ -1,4 +1,19 @@
 services:
+
+  # message queue
+  rabbitmq:
+    image: rabbitmq:3-management
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbitmq
+      RABBITMQ_DEFAULT_PASS: rabbitmq123
+    networks:
+      - microservices-network
+
   # Bases de datos
   postgres:
     image: postgres:15
@@ -132,8 +147,13 @@ services:
 
 volumes:
   postgres_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
   mongodb_data:
+    driver: local
   redis_data:
+    driver: local
 
 networks:
   microservices-network:
