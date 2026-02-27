@@ -57,7 +57,7 @@ services:
   # API Gateway
   api-gateway:
     build:
-      context: ./microservices/api-gateway
+      context: ./ecommerce-api-gateway
       dockerfile: Dockerfile
     container_name: api-gateway
     ports:
@@ -74,14 +74,15 @@ services:
     networks:
       - microservices-network
     volumes:
-      - ./microservices/api-gateway:/app
-      - /app/node_modules
-    command: pnpm run start:dev
+      - ./ecommerce-api-gateway/src:/usr/src/app/src
+      - ./ecommerce-api-gateway/package.json:/usr/src/app/package.json
+      - ./ecommerce-api-gateway/tsconfig.json:/usr/src/app/tsconfig.json
+      - /usr/src/app/node_modules
 
   # User Service
   user-service:
     build:
-      context: ./microservices/user-service
+      context: ./ecommerce-users-service
       dockerfile: Dockerfile
     container_name: user-service
     ports:
@@ -99,14 +100,15 @@ services:
     networks:
       - microservices-network
     volumes:
-      - ./microservices/user-service:/app
-      - /app/node_modules
-    command: pnpm run start:dev
+      - ./ecommerce-users-service/src:/usr/src/app/src
+      - ./ecommerce-users-service/package.json:/usr/src/app/package.json
+      - ./ecommerce-users-service/tsconfig.json:/usr/src/app/tsconfig.json
+      - /usr/src/app/node_modules
 
   # Product Service
   product-service:
     build:
-      context: ./microservices/product-service
+      context: ./ecommerce-products-service
       dockerfile: Dockerfile
     container_name: product-service
     ports:
@@ -119,14 +121,15 @@ services:
     networks:
       - microservices-network
     volumes:
-      - ./microservices/product-service:/app
-      - /app/node_modules
-    command: pnpm run start:dev
+      - ./ecommerce-products-service/src:/usr/src/app/src
+      - ./ecommerce-products-service/package.json:/usr/src/app/package.json
+      - ./ecommerce-products-service/tsconfig.json:/usr/src/app/tsconfig.json
+      - /usr/src/app/node_modules
 
   # Notification Service
   notification-service:
     build:
-      context: ./microservices/notification-service
+      context: ./ecommerce-notifications-service
       dockerfile: Dockerfile
     container_name: notification-service
     ports:
@@ -141,9 +144,10 @@ services:
     networks:
       - microservices-network
     volumes:
-      - ./microservices/notification-service:/app
-      - /app/node_modules
-    command: pnpm run start:dev
+      - ./ecommerce-notifications-service/src:/usr/src/app/src
+      - ./ecommerce-notifications-service/package.json:/usr/src/app/package.json
+      - ./ecommerce-notifications-service/tsconfig.json:/usr/src/app/tsconfig.json
+      - /usr/src/app/node_modules
 
 volumes:
   postgres_data:
@@ -158,3 +162,38 @@ volumes:
 networks:
   microservices-network:
     driver: bridge
+
+# =============================
+# Ejemplo de configuración recomendada
+# =============================
+#
+# docker-compose.yml (para producción):
+#
+#  api-gateway:
+#    build:
+#      context: ./ecommerce-api-gateway
+#      dockerfile: Dockerfile
+#    container_name: api-gateway
+#    ports:
+#      - '3000:3000'
+#    environment:
+#      - NODE_ENV=production
+#    networks:
+#      - microservices-network
+#    # No montes volúmenes en producción
+#
+#
+# docker-compose.override.yml (para desarrollo):
+#
+#  api-gateway:
+#    environment:
+#      - NODE_ENV=development
+#    volumes:
+#      - ./ecommerce-api-gateway/src:/usr/src/app/src
+#      - ./ecommerce-api-gateway/package.json:/usr/src/app/package.json
+#      - ./ecommerce-api-gateway/tsconfig.json:/usr/src/app/tsconfig.json
+#      - /usr/src/app/node_modules
+#    command: pnpm run start:dev
+#
+#
+# Así, en desarrollo tienes hot-reload y en producción una build limpia.

@@ -4,22 +4,21 @@
 
 echo "🔨 Construyendo todos los microservicios..."
 
-services=("api-gateway" "user-service" "product-service" "notification-service")
+services=("ecommerce-api-gateway" "ecommerce-users-service" "ecommerce-products-service" "ecommerce-notifications-service")
 
 for service in "${services[@]}"; do
     echo "📦 Construyendo $service..."
     
-    cd "microservices/$service"
+    cd "$service"
     
     if [ -f "package.json" ]; then
         pnpm install
-        pnpm run build
         echo "✅ $service construido exitosamente"
     else
         echo "❌ No se encontró package.json en $service"
     fi
     
-    cd "../.."
+    cd ..
 done
 
 echo "🎉 Construcción completada para todos los servicios!"

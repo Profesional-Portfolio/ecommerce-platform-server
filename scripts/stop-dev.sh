@@ -13,6 +13,6 @@ read -p "¿Deseas eliminar también los volúmenes de datos? (y/N): " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "🗑️ Eliminando volúmenes..."
-    docker-compose down -v
+    docker compose down -v
     echo "✅ Volúmenes eliminados."
 fi

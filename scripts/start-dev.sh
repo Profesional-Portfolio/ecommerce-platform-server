@@ -14,12 +14,12 @@ fi
 docker network create microservices-network 2>/dev/null || true
 
 echo "📦 Iniciando bases de datos..."
-docker compose up -d postgres mongodb redis
+docker compose up -d postgres mongodb redis rabbitmq
 
 echo "⏳ Esperando que las bases de datos estén listas..."
 sleep 10
 
-echo "🔧 Iniciando microservicios..."
+echo "🔧 Iniciando microservicios ..."
 docker compose up -d api-gateway user-service product-service notification-service
 
 echo "✅ Todos los servicios están iniciados!"
