@@ -3,6 +3,7 @@ services:
   # message queue
   rabbitmq:
     image: rabbitmq:3-management
+    container_name: microservices-rabbitmq
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     ports:
@@ -67,6 +68,8 @@ services:
       - USER_SERVICE_URL=http://user-service:3001
       - PRODUCT_SERVICE_URL=http://product-service:3002
       - NOTIFICATION_SERVICE_URL=http://notification-service:3003
+      - RABBITMQ_URLS=amqp://rabbitmq:rabbitmq123@microservices-rabbitmq:5672,
+      - RABBITMQ_QUEUE=ecommerce_queue
     depends_on:
       - user-service
       - product-service
@@ -95,6 +98,8 @@ services:
       - DATABASE_USER=postgres
       - DATABASE_PASSWORD=postgres123
       - JWT_SECRET=your-super-secret-jwt-key
+      - RABBITMQ_URLS=amqp://rabbitmq:rabbitmq123@microservices-rabbitmq:5672,
+      - RABBITMQ_QUEUE=ecommerce_queue
     depends_on:
       - postgres
     networks:
