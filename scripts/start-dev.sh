@@ -13,27 +13,30 @@ fi
 # Crear red si no existe                                                                              
 docker network create microservices-network 2>/dev/null || true
 
-echo "📦 Iniciando bases de datos..."
-docker compose up -d postgres mongodb redis rabbitmq
+echo "Inicializando todos los servicios en modo desarrollo..."
 
-echo "⏳ Esperando que las bases de datos estén listas..."
-sleep 10
+docker compose up --build
+# echo "📦 Iniciando bases de datos..."
+# docker compose up -d postgres mongodb redis rabbitmq
 
-echo "🔧 Iniciando microservicios ..."
-docker compose up -d api-gateway user-service product-service notification-service
+# echo "⏳ Esperando que las bases de datos estén listas y rabbitmq se inicie..."
+# sleep 10
 
-echo "✅ Todos los servicios están iniciados!"
-echo ""
-echo "📋 Servicios disponibles:"
-echo "  🌐 API Gateway:          http://localhost:3000"
-echo "  👤 User Service:         http://localhost:3001"
-echo "  📦 Product Service:      http://localhost:3002"
-echo "  🔔 Notification Service: http://localhost:3003"
-echo ""
-echo "📊 Bases de datos:"
-echo "  🐘 PostgreSQL:  localhost:5432 (user: postgres, pass: postgres123)"
-echo "  🍃 MongoDB:     localhost:27017 (user: mongo, pass: mongo123)"
-echo "  🔴 Redis:       localhost:6379 (pass: redis123)"
-echo ""
-echo "📝 Para ver logs: docker-compose logs -f [servicio]"
-echo "🛑 Para detener: ./scripts/stop-dev.sh"
+# echo "🔧 Iniciando microservicios ..."
+# docker compose up -d api-gateway user-service product-service notification-service
+
+# echo "✅ Todos los servicios están iniciados!"
+# echo ""
+# echo "📋 Servicios disponibles:"
+# echo "  🌐 API Gateway:          http://localhost:3000"
+# echo "  👤 User Service:         http://localhost:3001"
+# echo "  📦 Product Service:      http://localhost:3002"
+# echo "  🔔 Notification Service: http://localhost:3003"
+# echo ""
+# echo "📊 Bases de datos:"
+# echo "  🐘 PostgreSQL:  localhost:5432 (user: postgres, pass: postgres123)"
+# echo "  🍃 MongoDB:     localhost:27017 (user: mongo, pass: mongo123)"
+# echo "  🔴 Redis:       localhost:6379 (pass: redis123)"
+# echo ""
+# echo "📝 Para ver logs: docker-compose logs -f [servicio]"
+# echo "🛑 Para detener: ./scripts/stop-dev.sh"
