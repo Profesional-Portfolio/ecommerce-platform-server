@@ -1,13 +1,16 @@
-
 [submodule "ecommerce-users-service"]
 	path = ecommerce-users-service
 	url = https://github.com/Profesional-Portfolio/ecommerce-users-service.git
+	branch = feature/rabbit-communication
 [submodule "ecommerce-products-service"]
 	path = ecommerce-products-service
 	url = https://github.com/Profesional-Portfolio/ecommerce-products-service.git
+	branch = feature/rabbit-communication
 [submodule "ecommerce-notifications-service"]
 	path = ecommerce-notifications-service
 	url = https://github.com/Profesional-Portfolio/ecommerce-notifications-service.git
+	branch = feature/rabbit-communication
 [submodule "ecommerce-api-gateway"]
 	path = ecommerce-api-gateway
 	url = https://github.com/Profesional-Portfolio/ecommerce-api-gateway.git
+	branch = feature/rabbit-communication
