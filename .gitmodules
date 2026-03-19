@@ -14,3 +14,11 @@
 	path = ecommerce-api-gateway
 	url = https://github.com/Profesional-Portfolio/ecommerce-api-gateway.git
 	branch = feature/rabbit-communication
+[submodule "ecommerce-payments-service"]
+	path = ecommerce-payments-service
+	url = https://github.com/Profesional-Portfolio/ecommerce-payments-service.git
+	branch = feature/rabbit-communication
+[submodule "ecommerce-orders-service"]
+	path = ecommerce-orders-service
+	url = https://github.com/Profesional-Portfolio/ecommerce-orders-service.git
+	branch = feature/rabbit-communication
