@@ -68,12 +68,18 @@ services:
       - USER_SERVICE_URL=http://user-service:3001
       - PRODUCT_SERVICE_URL=http://product-service:3002
       - NOTIFICATION_SERVICE_URL=http://notification-service:3003
+      - SHOPPING_CART_SERVICE_URL=http://shopping-cart-service:3006
+      - ORDERS_SERVICE_URL=http://orders-service:3004
+      - PAYMENTS_SERVICE_URL=http://payments-service:3005
       - RABBITMQ_URLS=amqp://rabbitmq:rabbitmq123@microservices-rabbitmq:5672,
       - RABBITMQ_QUEUE=ecommerce_queue
     depends_on:
       - user-service
       - product-service
       - notification-service
+      - shopping-cart-service
+      - orders-service
+      - payments-service
     networks:
       - microservices-network
     volumes:
@@ -154,6 +160,97 @@ services:
       - ./ecommerce-notifications-service/tsconfig.json:/usr/src/app/tsconfig.json
       - /usr/src/app/node_modules
 
+  # Shopping Cart Service
+  shopping-cart-service:
+    build:
+      context: ./ecommerce-shopping-cart-service
+      dockerfile: Dockerfile
+    container_name: shopping-cart-service
+    environment:
+      - NODE_ENV=development
+      - RABBITMQ_URLS=amqp://rabbitmq:rabbitmq123@microservices-rabbitmq:5672
+      - RABBITMQ_QUEUE=shopping_cart_queue
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=redis123
+    depends_on:
+      - rabbitmq
+      - redis
+    networks:
+      - microservices-network
+    volumes:
+      - ./ecommerce-shopping-cart-service/src:/usr/src/app/src
+      - ./ecommerce-shopping-cart-service/package.json:/usr/src/app/package.json
+      - ./ecommerce-shopping-cart-service/tsconfig.json:/usr/src/app/tsconfig.json
+      - /usr/src/app/node_modules
+
+  # Orders Service
+  orders-service:
+    build:
+      context: ./ecommerce-orders-service
+      dockerfile: Dockerfile
+    container_name: orders-service
+    ports:
+      - '3004:3004'
+    environment:
+      - NODE_ENV=development
+      - PORT=3004
+      - RABBITMQ_URLS=amqp://rabbitmq:rabbitmq123@microservices-rabbitmq:5672
+      - RABBITMQ_QUEUE=orders_queue
+      - DATABASE_URL=postgresql://postgres:postgres123@orders-postgres:5432/ordersdb?schema=public
+    depends_on:
+      - rabbitmq
+      - orders-postgres
+    networks:
+      - microservices-network
+    volumes:
+      - ./ecommerce-orders-service/src:/usr/src/app/src
+      - ./ecommerce-orders-service/package.json:/usr/src/app/package.json
+      - ./ecommerce-orders-service/tsconfig.json:/usr/src/app/tsconfig.json
+      - /usr/src/app/node_modules
+
+  # Payments Service
+  payments-service:
+    build:
+      context: ./ecommerce-payments-service
+      dockerfile: Dockerfile
+    container_name: payments-service
+    ports:
+      - '3005:3005'
+    environment:
+      - NODE_ENV=development
+      - PORT=3005
+      - RABBITMQ_URLS=amqp://rabbitmq:rabbitmq123@microservices-rabbitmq:5672
+      - RABBITMQ_QUEUE=payments_queue
+      - STRIPE_SECRET_KEY=your_stripe_key
+      - STRIPE_ENDPOINT_SECRET=your_stripe_endpoint_secret
+      - PAYMENTS_CANCEL_URL=http://localhost:3000/cancel
+      - PAYMENTS_SUCCESS_URL=http://localhost:3000/success
+    depends_on:
+      - rabbitmq
+    networks:
+      - microservices-network
+    volumes:
+      - ./ecommerce-payments-service/src:/usr/src/app/src
+      - ./ecommerce-payments-service/package.json:/usr/src/app/package.json
+      - ./ecommerce-payments-service/tsconfig.json:/usr/src/app/tsconfig.json
+      - /usr/src/app/node_modules
+
+  # Base de datos específica para órdenes
+  orders-postgres:
+    image: postgres:15
+    container_name: orders-postgres
+    environment:
+      - POSTGRES_DB=ordersdb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres123
+    ports:
+      - '5433:5432'
+    volumes:
+      - orders_postgres_data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+
 volumes:
   postgres_data:
     driver: local
@@ -163,42 +260,10 @@ volumes:
     driver: local
   redis_data:
     driver: local
+  orders_postgres_data:
+    driver: local
 
 networks:
   microservices-network:
     driver: bridge
 
-# =============================
-# Ejemplo de configuración recomendada
-# =============================
-#
-# docker-compose.yml (para producción):
-#
-#  api-gateway:
-#    build:
-#      context: ./ecommerce-api-gateway
-#      dockerfile: Dockerfile
-#    container_name: api-gateway
-#    ports:
-#      - '3000:3000'
-#    environment:
-#      - NODE_ENV=production
-#    networks:
-#      - microservices-network
-#    # No montes volúmenes en producción
-#
-#
-# docker-compose.override.yml (para desarrollo):
-#
-#  api-gateway:
-#    environment:
-#      - NODE_ENV=development
-#    volumes:
-#      - ./ecommerce-api-gateway/src:/usr/src/app/src
-#      - ./ecommerce-api-gateway/package.json:/usr/src/app/package.json
-#      - ./ecommerce-api-gateway/tsconfig.json:/usr/src/app/tsconfig.json
-#      - /usr/src/app/node_modules
-#    command: pnpm run start:dev
-#
-#
-# Así, en desarrollo tienes hot-reload y en producción una build limpia.
