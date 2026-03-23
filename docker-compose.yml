@@ -10,8 +10,8 @@ services:
       - '5672:5672'
       - '15672:15672'
     environment:
-      RABBITMQ_DEFAULT_USER: rabbitmq
-      RABBITMQ_DEFAULT_PASS: rabbitmq123
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-rabbitmq}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-rabbitmq123}
     networks:
       - microservices-network
 
@@ -20,9 +20,9 @@ services:
     image: postgres:15
     container_name: microservices-postgres
     environment:
-      POSTGRES_DB: userdb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres123
+      POSTGRES_DB: ${USER_DB_NAME:-userdb}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres123}
     ports:
       - '5432:5432'
     volumes:
@@ -34,9 +34,9 @@ services:
     image: mongo:7
     container_name: microservices-mongo
     environment:
-      MONGO_INITDB_ROOT_USERNAME: mongo
-      MONGO_INITDB_ROOT_PASSWORD: mongo123
-      MONGO_INITDB_DATABASE: productdb
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER:-mongo}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASS:-mongo123}
+      MONGO_INITDB_DATABASE: ${MONGODB_DB:-productdb}
     ports:
       - '28017:27017'
     volumes:
@@ -49,7 +49,7 @@ services:
     container_name: microservices-redis
     ports:
       - '6379:6379'
-    command: redis-server --appendonly yes --requirepass redis123
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis123}
     volumes:
       - redis_data:/data
     networks:
@@ -64,15 +64,16 @@ services:
     ports:
       - '3000:3000'
     environment:
-      - NODE_ENV=development
-      - USER_SERVICE_URL=http://user-service:3001
-      - PRODUCT_SERVICE_URL=http://product-service:3002
-      - NOTIFICATION_SERVICE_URL=http://notification-service:3003
-      - SHOPPING_CART_SERVICE_URL=http://shopping-cart-service:3006
-      - ORDERS_SERVICE_URL=http://orders-service:3004
-      - PAYMENTS_SERVICE_URL=http://payments-service:3005
-      - RABBITMQ_URLS=amqp://rabbitmq:rabbitmq123@microservices-rabbitmq:5672,
-      - RABBITMQ_QUEUE=ecommerce_queue
+      - NODE_ENV=${NODE_ENV:-development}
+      - USER_SERVICE_URL=${USER_SERVICE_URL:-http://user-service:3001}
+      - PRODUCT_SERVICE_URL=${PRODUCT_SERVICE_URL:-http://product-service:3002}
+      - NOTIFICATION_SERVICE_URL=${NOTIFICATION_SERVICE_URL:-http://notification-service:3003}
+      - SHOPPING_CART_SERVICE_URL=${SHOPPING_CART_SERVICE_URL:-http://shopping-cart-service:3006}
+      - ORDERS_SERVICE_URL=${ORDERS_SERVICE_URL:-http://orders-service:3004}
+      - PAYMENTS_SERVICE_URL=${PAYMENTS_SERVICE_URL:-http://payments-service:3005}
+      - RABBITMQ_URLS=${RABBITMQ_URLS:-amqp://rabbitmq:rabbitmq123@microservices-rabbitmq:5672}
+      - RABBITMQ_QUEUE=${RABBITMQ_QUEUE_GATEWAY:-ecommerce_queue}
+      - JWT_SECRET=${JWT_SECRET}
     depends_on:
       - user-service
       - product-service
@@ -97,15 +98,15 @@ services:
     ports:
       - '3001:3001'
     environment:
-      - NODE_ENV=development
-      - DATABASE_HOST=postgres
-      - DATABASE_PORT=5432
-      - DATABASE_NAME=userdb
-      - DATABASE_USER=postgres
-      - DATABASE_PASSWORD=postgres123
-      - JWT_SECRET=your-super-secret-jwt-key
-      - RABBITMQ_URLS=amqp://rabbitmq:rabbitmq123@microservices-rabbitmq:5672,
-      - RABBITMQ_QUEUE=ecommerce_queue
+      - NODE_ENV=${NODE_ENV:-development}
+      - DATABASE_HOST=${DATABASE_HOST_USERS:-postgres}
+      - DATABASE_PORT=${DATABASE_PORT_USERS:-5432}
+      - DATABASE_NAME=${USER_DB_NAME:-userdb}
+      - DATABASE_USER=${POSTGRES_USER:-postgres}
+      - DATABASE_PASSWORD=${POSTGRES_PASSWORD:-postgres123}
+      - JWT_SECRET=${JWT_SECRET}
+      - RABBITMQ_URLS=${RABBITMQ_URLS:-amqp://rabbitmq:rabbitmq123@microservices-rabbitmq:5672}
+      - RABBITMQ_QUEUE=${RABBITMQ_QUEUE_USERS:-user_queue}
     depends_on:
       - postgres
     networks:
@@ -125,8 +126,8 @@ services:
     ports:
       - '3002:3002'
     environment:
-      - NODE_ENV=development
-      - MONGODB_URI=mongodb://mongo:mongo123@mongodb:27017/productdb?authSource=admin
+      - NODE_ENV=${NODE_ENV:-development}
+      - MONGODB_URI=${MONGODB_URI:-mongodb://mongo:mongo123@mongodb:27017/productdb?authSource=admin}
     depends_on:
       - mongodb
     networks:
@@ -146,10 +147,10 @@ services:
     ports:
       - '3003:3003'
     environment:
-      - NODE_ENV=development
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - REDIS_PASSWORD=redis123
+      - NODE_ENV=${NODE_ENV:-development}
+      - REDIS_HOST=${REDIS_HOST:-redis}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-redis123}
     depends_on:
       - redis
     networks:
@@ -167,12 +168,12 @@ services:
       dockerfile: Dockerfile
     container_name: shopping-cart-service
     environment:
-      - NODE_ENV=development
-      - RABBITMQ_URLS=amqp://rabbitmq:rabbitmq123@microservices-rabbitmq:5672
-      - RABBITMQ_QUEUE=shopping_cart_queue
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - REDIS_PASSWORD=redis123
+      - NODE_ENV=${NODE_ENV:-development}
+      - RABBITMQ_URLS=${RABBITMQ_URLS:-amqp://rabbitmq:rabbitmq123@microservices-rabbitmq:5672}
+      - RABBITMQ_QUEUE=${RABBITMQ_QUEUE_CART:-shopping_cart_queue}
+      - REDIS_HOST=${REDIS_HOST:-redis}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-redis123}
     depends_on:
       - rabbitmq
       - redis
@@ -193,11 +194,11 @@ services:
     ports:
       - '3004:3004'
     environment:
-      - NODE_ENV=development
-      - PORT=3004
-      - RABBITMQ_URLS=amqp://rabbitmq:rabbitmq123@microservices-rabbitmq:5672
-      - RABBITMQ_QUEUE=orders_queue
-      - DATABASE_URL=postgresql://postgres:postgres123@orders-postgres:5432/ordersdb?schema=public
+      - NODE_ENV=${NODE_ENV:-development}
+      - PORT=${ORDERS_PORT:-3004}
+      - RABBITMQ_URLS=${RABBITMQ_URLS:-amqp://rabbitmq:rabbitmq123@microservices-rabbitmq:5672}
+      - RABBITMQ_QUEUE=${RABBITMQ_QUEUE_ORDERS:-orders_queue}
+      - DATABASE_URL=${DATABASE_URL_ORDERS:-postgresql://postgres:postgres123@orders-postgres:5432/ordersdb?schema=public}
     depends_on:
       - rabbitmq
       - orders-postgres
@@ -218,14 +219,14 @@ services:
     ports:
       - '3005:3005'
     environment:
-      - NODE_ENV=development
-      - PORT=3005
-      - RABBITMQ_URLS=amqp://rabbitmq:rabbitmq123@microservices-rabbitmq:5672
-      - RABBITMQ_QUEUE=payments_queue
-      - STRIPE_SECRET_KEY=your_stripe_key
-      - STRIPE_ENDPOINT_SECRET=your_stripe_endpoint_secret
-      - PAYMENTS_CANCEL_URL=http://localhost:3000/cancel
-      - PAYMENTS_SUCCESS_URL=http://localhost:3000/success
+      - NODE_ENV=${NODE_ENV:-development}
+      - PORT=${PAYMENTS_PORT:-3005}
+      - RABBITMQ_URLS=${RABBITMQ_URLS:-amqp://rabbitmq:rabbitmq123@microservices-rabbitmq:5672}
+      - RABBITMQ_QUEUE=${RABBITMQ_QUEUE_PAYMENTS:-payments_queue}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_ENDPOINT_SECRET=${STRIPE_ENDPOINT_SECRET}
+      - PAYMENTS_CANCEL_URL=${PAYMENTS_CANCEL_URL:-http://localhost:3000/cancel}
+      - PAYMENTS_SUCCESS_URL=${PAYMENTS_SUCCESS_URL:-http://localhost:3000/success}
     depends_on:
       - rabbitmq
     networks:
@@ -241,9 +242,9 @@ services:
     image: postgres:15
     container_name: orders-postgres
     environment:
-      - POSTGRES_DB=ordersdb
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres123
+      - POSTGRES_DB=${ORDERS_DB_NAME:-ordersdb}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres123}
     ports:
       - '5433:5432'
     volumes:

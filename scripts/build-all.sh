@@ -4,7 +4,7 @@
 
 echo "🔨 Construyendo todos los microservicios..."
 
-services=("ecommerce-api-gateway" "ecommerce-users-service" "ecommerce-products-service" "ecommerce-notifications-service")
+services=("ecommerce-api-gateway" "ecommerce-users-service" "ecommerce-products-service" "ecommerce-notifications-service" "ecommerce-shopping-cart-service" "ecommerce-orders-service" "ecommerce-payments-service")
 
 for service in "${services[@]}"; do
     echo "📦 Construyendo $service..."
